@@ -23,6 +23,15 @@ dependencyResolutionManagement {
             }
         }
 
+        // Gitea Maven registry (for BOM catalog and internal artifacts)
+        maven {
+            url = uri('https://git.rokkon.com/api/packages/io-pipeline/maven')
+            allowInsecureProtocol = false
+            content {
+                includeGroupByRegex "io\\.pipeline(\\..*)?"
+            }
+        }
+
         // Nexus as Maven Central mirror (fast local cache on NAS)
         maven {
             url = uri('https://maven.rokkon.com/repository/maven-public/')

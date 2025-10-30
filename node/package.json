@@ -1,14 +1,14 @@
 {
   "name": "@io-pipeline/grpc-stubs",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "TypeScript Connect-ES stubs for Pipeline Engine services, generated from Protocol Buffers",
   "type": "module",
-  "main": "./dist/registration/platform_registration_pb.js",
-  "types": "./dist/registration/platform_registration_pb.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/registration/platform_registration_pb.js",
-      "types": "./dist/registration/platform_registration_pb.d.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./health": "./dist/grpc/health/v1/health_pb.js",
     "./registration": "./dist/registration/platform_registration_pb.js",
@@ -17,8 +17,13 @@
     "./account": "./dist/repository/account/account_service_pb.js",
     "./connector": "./dist/module/connectors/connector_intake_service_pb.js",
     "./pipedoc": "./dist/repository/pipedoc/pipedoc_service_pb.js",
+    "./repository/filesystem": "./dist/repository/filesystem/filesystem_service_pb.js",
     "./mapping": "./dist/mapping-service/mapping_service_pb.js",
-    "./module": "./dist/module/module_service_pb.js"
+    "./module": "./dist/module/module_service_pb.js",
+    "./core": {
+      "import": "./dist/core/pipeline_core_types_pb.js",
+      "types": "./dist/core/pipeline_core_types_pb.d.ts"
+    }
   },
   "files": [
     "dist/**/*.js",
@@ -28,7 +33,8 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "generate": "buf generate ../grpc-stubs/src/main/proto && tsc",
+    "copy-src": "cp src/*.ts dist/",
+    "generate": "buf generate ../grpc-stubs/src/main/proto && npm run copy-src && tsc",
     "build": "npm run clean && npm run generate",
     "prepublishOnly": "npm run build"
   },

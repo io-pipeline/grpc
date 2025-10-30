@@ -1,11 +1,15 @@
 {
   "name": "@io-pipeline/grpc-stubs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "TypeScript Connect-ES stubs for Pipeline Engine services, generated from Protocol Buffers",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
     "./health": "./dist/grpc/health/v1/health_pb.js",
     "./registration": "./dist/registration/platform_registration_pb.js",
     "./shell": "./dist/frontend/shell_service_pb.js",

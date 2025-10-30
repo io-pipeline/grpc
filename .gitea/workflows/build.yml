@@ -35,6 +35,16 @@ jobs:
       working-directory: node
       run: pnpm install --no-frozen-lockfile && pnpm build
 
+    - name: Update package version with Git SHA
+      if: github.ref == 'refs/heads/main'
+      id: versioning
+      working-directory: node
+      run: |
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        pnpm version "1.0.0-dev.1-$(date +%s)-${SHORT_SHA}" --no-git-tag-version
+        NEW_VERSION=$(node -p "require('./package.json').version")
+        echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
     - name: Configure npm authentication
       if: github.ref == 'refs/heads/main'
       working-directory: node
@@ -43,4 +53,4 @@ jobs:
     - name: Publish to Gitea npm
       if: github.ref == 'refs/heads/main'
       working-directory: node
-      run: pnpm publish --no-git-checks
+      run: pnpm publish --tag dev --no-git-checks

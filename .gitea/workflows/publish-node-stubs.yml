@@ -36,13 +36,13 @@ jobs:
       - name: Publish to Gitea Registry
         run: |
           cd node
-          # Create .npmrc matching global format (with trailing slash)
+          # Create .npmrc with personal access token (not OAuth2)
           echo "@io-pipeline:registry=https://git.rokkon.com/api/packages/io-pipeline/npm/" > .npmrc
-          echo "//git.rokkon.com/api/packages/io-pipeline/npm/:_authToken=${{ secrets.GITEA_TOKEN }}" >> .npmrc
+          echo "//git.rokkon.com/api/packages/io-pipeline/npm/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}" >> .npmrc
           cat .npmrc
           pnpm publish --no-git-checks
         env:
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
       
       - name: Publish to GitHub Packages
         run: |

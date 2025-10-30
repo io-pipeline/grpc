@@ -5,6 +5,17 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    "./health": "./dist/grpc/health/v1/health_pb.js",
+    "./registration": "./dist/registration/platform_registration_pb.js",
+    "./shell": "./dist/frontend/shell_service_pb.js",
+    "./upload": "./dist/repository/filesystem/upload/upload_service_pb.js",
+    "./account": "./dist/repository/account/account_service_pb.js",
+    "./connector": "./dist/module/connectors/connector_intake_service_pb.js",
+    "./pipedoc": "./dist/repository/pipedoc/pipedoc_service_pb.js",
+    "./mapping": "./dist/mapping-service/mapping_service_pb.js",
+    "./module": "./dist/module/module_service_pb.js"
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",

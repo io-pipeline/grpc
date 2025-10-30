@@ -1,12 +1,7 @@
 rootProject.name = 'grpc-core'
 
-// Import version catalog from parent project
+// Version catalog auto-loaded from gradle/libs.versions.toml
 dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            from(files("../gradle/libs.versions.toml"))
-        }
-    }
 }
 
 include 'grpc-stubs'

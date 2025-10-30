@@ -1,9 +1,39 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'grpc-core'
 
-// Version catalog auto-loaded from gradle/libs.versions.toml
 dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            // Import version catalog from published BOM
+            from("io.pipeline:pipeline-bom-catalog:1.0.0-SNAPSHOT")
+        }
+    }
+
+    repositories {
+        // Use Maven Local for BOM catalog during development
+        mavenLocal() {
+            content {
+                includeGroupByRegex "io\\.pipeline(\\..*)?"
+            }
+        }
+
+        // Nexus as Maven Central mirror (fast local cache on NAS)
+        maven {
+            url = uri('https://maven.rokkon.com/repository/maven-public/')
+            allowInsecureProtocol = false
+        }
+
+        // Fallback to Maven Central
+        mavenCentral()
+    }
 }
 
 include 'grpc-stubs'
-include 'grpc-wiremock'
 include 'grpc-google-descriptor'
+// grpc-wiremock moved to separate repo

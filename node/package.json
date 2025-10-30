@@ -21,9 +21,6 @@
     "typescript",
     "pipeline"
   ],
-  "publishConfig": {
-    "registry": "http://nas.rokkon.com:8081/repository/npm-hosted/"
-  },
   "devDependencies": {
     "@bufbuild/buf": "^1.56.0",
     "@bufbuild/protoc-gen-es": "latest",

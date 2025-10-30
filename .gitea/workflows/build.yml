@@ -16,9 +16,9 @@ jobs:
     - name: Build Java gRPC stubs
       run: ./gradlew build --no-daemon --build-cache
 
-    - name: Publish Java stubs to Gitea Maven
+    - name: Publish Java artifacts to Gitea Maven
       if: github.ref == 'refs/heads/main'
-      run: ./gradlew grpc-stubs:publishMavenPublicationToGiteaRepository -Pgitea.token=$MAVEN_PUBLISH_TOKEN
+      run: ./gradlew grpc-stubs:publishMavenPublicationToGiteaRepository grpc-google-descriptor:publishMavenPublicationToGiteaRepository -Pgitea.token=$MAVEN_PUBLISH_TOKEN
       env:
         MAVEN_PUBLISH_TOKEN: ${{ secrets.MAVEN_PUBLISH_TOKEN }}
 

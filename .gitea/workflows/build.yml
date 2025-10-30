@@ -1,0 +1,49 @@
+name: Build and Publish gRPC Stubs
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-java:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Java gRPC stubs
+      run: ./gradlew build --no-daemon --build-cache
+
+    - name: Publish Java stubs to Gitea Maven
+      if: github.ref == 'refs/heads/main'
+      run: ./gradlew grpc-stubs:publishMavenPublicationToGiteaRepository -Pgitea.token=$MAVEN_PUBLISH_TOKEN
+      env:
+        MAVEN_PUBLISH_TOKEN: ${{ secrets.MAVEN_PUBLISH_TOKEN }}
+
+  build-npm:
+    runs-on: ubuntu-latest
+    needs: build-java
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'pnpm'
+        cache-dependency-path: 'node/pnpm-lock.yaml'
+
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    - name: Build npm package
+      working-directory: node
+      run: pnpm install && pnpm build
+
+    - name: Publish to Gitea npm
+      if: github.ref == 'refs/heads/main'
+      working-directory: node
+      run: pnpm publish --no-git-checks

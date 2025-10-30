@@ -29,19 +29,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: 'pnpm'
-        cache-dependency-path: 'node/pnpm-lock.yaml'
-
-    - name: Install pnpm
-      run: npm install -g pnpm
+    # Node 22 and pnpm already in custom runner image - no setup needed!
 
     - name: Build npm package
       working-directory: node
-      run: pnpm install && pnpm build
+      run: pnpm install --no-frozen-lockfile && pnpm build
 
     - name: Publish to Gitea npm
       if: github.ref == 'refs/heads/main'

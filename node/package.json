@@ -1,0 +1,41 @@
+{
+  "name": "@io-pipeline/grpc-stubs",
+  "version": "1.0.0-dev.1",
+  "description": "Generated gRPC stubs for Pipeline platform",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "generate": "buf generate ../grpc-stubs/src/main/proto && tsc",
+    "build": "npm run clean && npm run generate",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "grpc",
+    "protobuf",
+    "typescript",
+    "pipeline"
+  ],
+  "publishConfig": {
+    "registry": "http://nas.rokkon.com:8081/repository/npm-hosted/"
+  },
+  "devDependencies": {
+    "@bufbuild/buf": "^1.56.0",
+    "@bufbuild/protoc-gen-es": "latest",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "latest",
+    "@connectrpc/connect": "latest",
+    "@connectrpc/connect-web": "latest"
+  },
+  "engines": {
+    "node": ">=22.0.0 <23",
+    "pnpm": ">=10 <11"
+  }
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package io.pipeline.mapping;
+
+import "core/pipeline_core_types.proto";
+
+option java_multiple_files = true;
+option java_package = "io.pipeline.mapping";
+option java_outer_classname = "MappingServiceProto";
+
+service MappingService {
+  // Applies a series of mapping rules to a document.
+  rpc ApplyMapping(ApplyMappingRequest) returns (ApplyMappingResponse);
+}
+
+// A MappingRule represents a single logical transformation that can have
+// multiple fallback strategies. The service will attempt each 'candidate_mapping'
+// in order until one succeeds.
+message MappingRule {
+  repeated io.pipeline.data.v1.ProcessingMapping candidate_mappings = 1;
+}
+
+message ApplyMappingRequest {
+  io.pipeline.data.v1.PipeDoc document = 1;
+  // The list of rules to apply sequentially to the document.
+  repeated MappingRule rules = 2;
+}
+
+message ApplyMappingResponse {
+  io.pipeline.data.v1.PipeDoc document = 1;
+}

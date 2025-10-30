@@ -36,12 +36,12 @@ jobs:
       - name: Publish to Gitea Registry
         run: |
           cd node
-          # Create .npmrc with GITEA_TOKEN (must have write:package permission)
+          # Create .npmrc with NPM_PUBLISH_TOKEN
           echo "@io-pipeline:registry=https://git.rokkon.com/api/packages/io-pipeline/npm/" > .npmrc
-          echo "//git.rokkon.com/api/packages/io-pipeline/npm/:_authToken=${GITEA_TOKEN}" >> .npmrc
+          echo "//git.rokkon.com/api/packages/io-pipeline/npm/:_authToken=${{ secrets.NPM_PUBLISH_TOKEN }}" >> .npmrc
           pnpm publish --no-git-checks
         env:
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
       
       - name: Publish to GitHub Packages
         run: |

@@ -1,0 +1,107 @@
+plugins {
+    id 'java-library'
+    id 'io.quarkus' version '3.28.5'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    // Use root :bom if present; otherwise fall back to Quarkus platform BOM (non-enforced to avoid leaking constraints)
+    if (rootProject.findProject(':bom') != null) {
+        implementation platform(project(':bom'))
+    } else {
+        implementation platform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    }
+    
+    // Core WireMock with gRPC extension (standalone only)
+    api 'org.wiremock:wiremock-standalone:3.13.1'
+    api 'org.wiremock:wiremock-grpc-extension-standalone:0.11.0'
+    
+    // Quarkus WireMock Dev Service (optional for consumers; exported via API for OOTB usage in Quarkus tests)
+    api 'io.quarkiverse.wiremock:quarkus-wiremock:1.5.1'
+
+    // Quarkus testing integration - API so consuming projects get them automatically
+    api 'io.quarkus:quarkus-junit5'
+    api 'io.quarkus:quarkus-test-common'
+    
+    // gRPC runtime for testing - API so consuming projects get them automatically  
+    api 'io.quarkus:quarkus-grpc'
+    api 'io.quarkus:quarkus-mutiny'
+    
+    // Depend on grpc-stubs for generated Java classes
+    api project(':grpc-stubs')
+
+    // Include grpc-google-descriptor for WireMock descriptor with Google types
+    // API scope so consuming projects get the descriptor on classpath
+    api project(':grpc-google-descriptor')
+
+    // Tests that exercise the dynamic registration client against the mock server
+    def dynClientProject = rootProject.findProject(':libraries:dynamic-grpc-registration-clients')
+    if (dynClientProject != null) {
+        testImplementation project(':libraries:dynamic-grpc-registration-clients')
+        testImplementation project(':libraries:dynamic-grpc')
+        testImplementation project(':libraries:pipeline-api')
+    } else {
+        testImplementation 'io.pipeline:dynamic-grpc-registration-clients:1.0.0-SNAPSHOT'
+        testImplementation 'io.pipeline:dynamic-grpc:1.0.0-SNAPSHOT'
+        testImplementation 'io.pipeline:pipeline-api:1.0.0-SNAPSHOT'
+    }
+}
+
+group = 'io.pipeline'
+version = '1.0.0-SNAPSHOT'
+
+// Enable publishing to Maven Local
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            
+            pom {
+                name = 'Pipeline gRPC WireMock Testing Framework'
+                description = 'Reusable gRPC testing framework with WireMock and service descriptor support'
+            }
+        }
+    }
+}
+
+// Suppress enforced platform validation for publishing
+tasks.withType(GenerateModuleMetadata) {
+    suppressedValidationErrors.add('enforced-platform')
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+// Copy gRPC descriptor from grpc-google-descriptor to test resources for WireMock
+// WireMock scans filesystem directories, not JAR files, so descriptor must be in src/test/resources
+task copyGrpcDescriptor(type: Copy) {
+    dependsOn ':grpc-google-descriptor:generateProto'
+    dependsOn ':grpc-google-descriptor:generateTestProto'
+    dependsOn ':grpc-google-descriptor:processResources'
+    from(project(':grpc-google-descriptor').sourceSets.main.output.resourcesDir) {
+        include 'META-INF/grpc/*.dsc'
+    }
+    into "$projectDir/src/test/resources"
+}
+
+processTestResources.dependsOn copyGrpcDescriptor

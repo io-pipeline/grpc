@@ -1,0 +1,14 @@
+rootProject.name = 'grpc-core'
+
+// Import version catalog from parent project
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+}
+
+include 'grpc-stubs'
+include 'grpc-wiremock'
+include 'grpc-google-descriptor'

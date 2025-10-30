@@ -1,13 +1,15 @@
 {
   "name": "@io-pipeline/grpc-stubs",
-  "version": "1.0.0-dev.1",
-  "description": "Generated gRPC stubs for Pipeline platform",
+  "version": "1.0.0",
+  "description": "TypeScript Connect-ES stubs for Pipeline Engine services, generated from Protocol Buffers",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "dist/**/*.d.ts",
+    "dist/**/*.d.ts.map",
+    "dist/**/*.js.map"
   ],
   "scripts": {
     "clean": "rm -rf dist",
@@ -15,12 +17,28 @@
     "build": "npm run clean && npm run generate",
     "prepublishOnly": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://git.rokkon.com/io-pipeline/grpc.git",
+    "directory": "node"
+  },
+  "bugs": {
+    "url": "https://git.rokkon.com/io-pipeline/grpc/issues"
+  },
+  "homepage": "https://git.rokkon.com/io-pipeline/grpc#readme",
+  "license": "Apache-2.0",
   "keywords": [
     "grpc",
     "protobuf",
     "typescript",
-    "pipeline"
+    "connect-es",
+    "pipeline",
+    "stubs"
   ],
+  "author": "Pipeline Team",
+  "publishConfig": {
+    "registry": "https://git.rokkon.com/api/packages/io-pipeline/npm"
+  },
   "devDependencies": {
     "@bufbuild/buf": "^1.56.0",
     "@bufbuild/protoc-gen-es": "latest",

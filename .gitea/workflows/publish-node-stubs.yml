@@ -1,0 +1,52 @@
+name: Publish Node gRPC Stubs
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-node-stubs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      
+      - name: Install dependencies
+        run: |
+          cd node
+          pnpm install
+      
+      - name: Build node stubs
+        run: |
+          cd node
+          pnpm run build
+      
+      - name: Publish to Gitea Registry
+        run: |
+          cd node
+          echo "//git.rokkon.com/api/packages/io-pipeline/npm/:_authToken=${{ secrets.GITEA_TOKEN }}" > .npmrc
+          pnpm publish --no-git-checks
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+      
+      - name: Publish to GitHub Packages
+        run: |
+          cd node
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "@io-pipeline:registry=https://npm.pkg.github.com" >> .npmrc
+          pnpm publish --registry https://npm.pkg.github.com --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
